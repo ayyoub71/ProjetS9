@@ -1,0 +1,59 @@
+Nous avoons dans un premier temps tenté de calculer la fréquence cardiaque
+en mesurant la variation d’intensité de couleurs sur plusieurs frames issus 
+d’une vidéo enregistrée directement au contact du doigt d’un patient. 
+Cette variation d'intensité était facilement visible sur une courbe.
+
+Nous avions produit une méthode permettant dans un premier temps de lisser cette courbe, afin de 
+pouvoir plus facilement retrouver chacun des pics d’intensité de brillance des pixels. 
+Notre raisonnement consistait ainsi à attribuer un battement cardiaque à chaque maximum sur la courbe. 
+
+Cependant, nous avons pris conscience que la méthode de lissage, puis 
+d’identification des maximums d’intensités pouvait s’avérer être moyennement fiable d’un point de vue théorique. 
+
+C’est pourquoi nous nous sommes ensuite s’intéressé à la méthode d’identification de la période de chaque fonction 
+grâce aux transformées de Fourier. En effet, en étant capable d’appliquer la transformée de Fourier à la courbe d'analyse de la variation de 
+la couleur des pixels au cours du temps, nous pourrions ainsi obtenir la fréquence fondamentale du signal, donc sa période inversement proportionnelle.
+En obtenant la fréquence fondamentale, il serait donc assez facile d’obtenir la valeur de la fréquence cardiaque. 
+
+Une fois ce raisonnement parfaitement compris par chacun des membres du groupe, nous avons tenté de le mettre en pratique. à l'aide de la méthode suivante :
+
+def passebande(resultats):
+    # Fréquence d'échantillonnage (Hz)
+    fs = 30
+
+    # Coefficients de Butterworth pour le filtre passe-bande
+    low = 0.67 / (0.5 * fs)  #0.3 car ca correspond a un bpm max de 180
+    high = 3 / (0.5 * fs) #bpm de 40
+    b, a = signal.butter(4, [low, high], btype='band')
+
+    # Appliquer le filtre passe-bande
+    signal_out = signal.filtfilt(b, a, resultats)
+
+    # Affichage du signal filtré
+    #print(signal_out)
+
+    #ft = signal.TransferFunction(b, [1])
+    return signal_out
+    
+    
+def fc():
+    r=coup()
+    signalfiltre= passebande(r)
+    fc= freqcardiaque(signalfiltre)
+    root.destroy
+    return fc
+    
+def freqcardiaque(signalfiltre):
+    fs = 30
+    tf = np.abs((np.fft.fftshift(np.fft.fft(signalfiltre))))
+    f = np.linspace(-fs/2, fs/2, len(tf)) 
+
+    #Trouver l'indice de la fréquence cardiaque (fréquence la plus élevée dans la bande de fréquences cardiaques)
+   
+    x=np.argmax(tf)
+    #print(x)
+    fc1 = np.abs(f[x])
+    fc=(fc1)*60
+    #print('BPM = ', fc)
+    return fc
+    
