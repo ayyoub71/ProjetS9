@@ -56,4 +56,8 @@ def freqcardiaque(signalfiltre):
     fc=(fc1)*60
     #print('BPM = ', fc)
     return fc
-    
+ 
+ 
+ 
+ Cette technique beaucoup plus robuste que la première proposée fonctionne de manière optimale, 
+ avec des valeurs affichées dont l'incertitude peut être quantifiée à environ 2% par rapport à un oxyètre de pouls traditionnel.
