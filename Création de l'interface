@@ -1,0 +1,115 @@
+Dans ce répertoire, vous allez découvrir comment nous avons concu l'interface de notre application PolyOxy.
+
+Cette interface se veut être ergonomique, simple d'utilisation, et avec un aspect esthètique particulièrement soignée.
+Nous avons la ferme conviction que la conception d’une application doit aujourd'hui être “centrée utilisateur” et nous 
+souhaitons mettre en œuvre un prototype qui ne marche pas seulement mais qui fonctionne, avec tous les utilisateurs. 
+En plus de permettre un accès facile à l’application par tous et sa compréhension, nous croyons à l’importance de la 
+conception centrée utilisateur pour le bon fonctionnement de notre code également en tant que tel. Une bonne prise en main du code
+évite les erreurs de manipulation qui peuvent donner leur à un mauvais fonctionnement de l’application et à des données de sorties erronées.
+Par exemple, si l’utilisateur n’est pas correctement guidé par l’application dans la pose de son doigt sur la caméra, il
+posera par mégarde son doigt sur le mauvais appareil photo (car il y en a plusieurs dans un dernier modèle d’iPhone par exemple, 
+qui n’ont pas la même fonction), ou le flash n’est pas utilisé, ou la vidéo est beaucoup trop courte, et alors la donnée entrante
+ne s’en trouvera pas utilisable. Il faut donc que nous essayons de “normaliser” les données entrantes pour qu’elles aient toutes le même 
+format d’entrée et soient pleinement exploitées, c’est pourquoi il est aussi important de se concentrer sur cet aspect-là du projet.
+
+#interface :
+    
+def open_second_window():
+    # Create the second window
+    second_window = tk.Tk()
+    second_window.configure(bg='')
+    second_window.title("Resultat :")
+    #second_window.geometry("200x200+5+0")
+    screen_width = second_window.winfo_screenwidth()
+    screen_height = second_window.winfo_screenheight()
+
+    # Calculate the x and y coordinates for the tkinter window
+    x = int((screen_width - second_window.winfo_reqwidth()) / 2)
+    y = int((screen_height - second_window.winfo_reqheight()) / 2)
+
+    # Set the position of the tkinter window to the center of the screen
+    second_window.geometry("+{}+{}".format(x, y))
+    
+    
+    fc2=fc()
+    text_label2 = tk.Label(second_window, text='Le BPM est de :', font=("Arial", 12))
+    text_label = tk.Label(second_window, text=fc2, font=("Arial", 12))
+    text_label2.pack()
+    text_label.pack()
+    
+    root.destroy()
+    
+def ow():
+    # Create the second window
+    third_window = tk.Tk()
+    third_window.title("Resultat :")
+    #third_window.geometry("200x200+5+0")
+    
+    screen_width = third_window.winfo_screenwidth()
+    screen_height = third_window.winfo_screenheight()
+
+    # Calculate the x and y coordinates for the tkinter window
+    x = int((screen_width - third_window.winfo_reqwidth()) / 2)
+    y = int((screen_height - third_window.winfo_reqheight()) / 2)
+
+    # Set the position of the tkinter window to the center of the screen
+    third_window.geometry("+{}+{}".format(x, y))
+    
+    
+    
+    
+    
+    spo22=spo2()
+    text_label3 = tk.Label(third_window, text='Le taux dO2 est de :', font=("Arial", 12))
+    text_label = tk.Label(third_window, text=spo22, font=("Arial", 12))
+    text_label3.pack()
+    text_label.pack()
+
+
+    # Destroy the first window
+    root.destroy()
+
+
+root = tk.Tk()
+root.geometry("1000x600+0+0")
+root.configure(bg='light blue')
+
+
+#bien mettre le chemin de l'image
+bg = tk.PhotoImage(file = "C:/Users/leael/Dropbox/PC/Downloads/rsz_1anatoheart-overlay.png")
+
+canvas1 = tk.Canvas(root, width = 1036, height = 600)
+canvas1.pack(fill = "both", expand = True)
+
+
+canvas1.create_image( 0, 0, image = bg,anchor = "nw")
+canvas1.create_text( 260, 150, text = " o l y  O x y", font=("Times New Roman",30,"bold"), fill='grey')
+#r=canvas1.create_rectangle(canvas1.bbox(i),fill="grey")
+#canvas1.tag_lower(r,i)
+
+
+#ca marche ici, donc faire meme chose pour SPO2
+button1 = tk.Button(root, text="BPM",font=("Arial", 12), bg="grey",fg="black", command=open_second_window)
+button1.place(x=203, y=250)
+button1.config(padx=20, pady=10)
+
+button2 = tk.Button(root, text="SPO2",font=("Arial", 12),bg="grey",fg="black", command=ow)
+button2.place(x=200, y=310)
+button2.config(padx=20, pady=10)
+
+
+menubar = tk.Menu(root)
+filemenu = tk.Menu(menubar, tearoff=0)
+filemenu.add_command(label="Quitter", command=root.destroy)
+menubar.add_cascade(label="Fichier", menu=filemenu)
+root.config(menu=menubar)
+
+# create a Text widget with a Scrollbar attached
+txt = scrolledtext.ScrolledText(root, undo=True)
+txt['font'] = ('consolas', '12')
+txt.pack(expand=True, fill='both')
+
+root.mainloop()# create a menu bar with an Exit command
+
+
+Ainsi, deux boutons permettent respectivement de choisir le calcul de la fréquence cardiaque, et de réaliser la mesure de l'oxymètrie
