@@ -1,0 +1,118 @@
+Dans ce répertoire vous aller decouvrir le cheminement de notre reflexion consistant à obtenir de la manière la plus précise possible la saturation en oxygène d'un individu à partir
+d'une vidéo réalisée par un smartphone.
+
+le principe de calcul de la saturation en oxygène du sang artériel reposera cette fois-ci sur une “quantification de la couleur”,
+c'est-à-dire l’attribution d’une valeur scalaire pour chaque vidéo. 
+Ce scalaire traduit la valeur moyenne de l'intensité des pixels de la matrice dans sa globalité, c'est-à-dire de l’ensemble des frames
+
+C’est pourquoi, nous nous devons de récolter suffisamment de valeurs pour construire une courbe d’étalonnage, qui permettra 
+par la suite de trouver la valeur de la saturation à partir du nombre N de n’importe quelle vidéo. 
+Pour ce qui concerne la réalisation de cette courbe d’étalonnage, il nous faudrait une grande base de donnée, fiable. 
+Malheureusement, nous avons remarqué en prenant nos mesures que les mesures sont peu cohérentes.
+En effet, pour chacun des sujets chez lequel nous relevons les constantes, nous utilisons de manière simultanée à la fois l’appareil photo du téléphone
+permettant d’acquérir une vidéo à analyser, et dans le même temps un appareil de mesure témoin permettant d’indiquer les valeurs théoriques. 
+
+
+La méthode utilisée repose essentiellement sur le code suivant :
+
+def calibration():
+    dossier = 'C:/Users/leael/OneDrive/Desktop/sat'
+    #video_files = [f for f in os.listdir(directory) if f.endswith('.mp4')]
+    nomvideos = []
+    valmoys = []
+
+    for nomvideo in os.listdir(dossier):
+        # Lire la vidéo
+        video = cv2.VideoCapture(os.path.join(dossier, nomvideo))
+
+        # Initialiser la somme des pixels pour toutes les frames
+        sommepix = 0
+
+        # Initialiser le compteur de frames
+        frame_count = 0
+
+        # Boucle sur toutes les frames de la vidéo
+        while True:
+            ret, frame = video.read()
+            if not ret:
+                break
+            frame_count += 1
+            sommepix += np.sum(frame)
+
+        # Fermer la vidéo
+        video.release()
+
+        # Calculer la moyenne des pixels pour toutes les frames de la vidéo
+        valmoy = sommepix / frame_count
+
+        # Ajouter le nom de la vidéo et la valeur moyenne à la liste
+        nomvideos.append(nomvideo)
+        valmoys.append(valmoy)
+
+    # Afficher le graphique
+    plt.scatter(nomvideos, valmoys)
+    plt.xlabel('Vidéos')
+    plt.ylabel('Moyenne des pixels')
+    plt.show()
+
+    #minn=np.min(valmoys)
+    #maxx=np.max(valmoys)
+    #print('intervalle:', minn, maxx)
+    
+    num=[]
+    for i in nomvideos :
+        prefix = i[:2]
+        # Convertir les lettres en nombre
+        number = int(prefix)
+        num.append(number)
+
+    
+    coefficients = np.polyfit(num, valmoys, 1)
+
+    # Afficher l'équation de régression (y = mx + b)
+    m = coefficients[0]
+    b = coefficients[1]
+    print("Equation de regression: y = {}x + {}".format(m, b))
+    
+    return m, b
+    
+    
+def calcul(m,b) :
+    resultats=[]
+    cap=choose_video()
+    #cap=cv2.VideoCapture("C:/Users/leael/Dropbox/PC/Downloads/fcastrid.mp4")
+        
+        
+        # Initialiser la somme des pixels pour toutes les frames
+    sommepix = 0
+
+    # Initialiser le compteur de frames
+    frame_count = 0
+
+    # Boucle sur toutes les frames de la vidéo
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frame_count += 1
+        sommepix += np.sum(frame)
+    
+    # Fermer la vidéo
+    cap.release()
+
+    # Calculer la moyenne des pixels pour toutes les frames de la vidéo
+    valmoy = sommepix / frame_count
+    
+    o2=(valmoy-b)/m
+        
+    return o2
+    
+    
+def spo2():
+    m,b=calibration()
+    spo2=calcul(m,b)
+    
+    return spo2
+    
+    
+    
