@@ -5,4 +5,3 @@ L'application porte le nom de PolyOxy. Elle a été developpé grâce à un code
 
 Ce code a été concu par l'intermédiaire de différentes étapes qui ont toutes été renseignées dans les différents répertoires de ce Github.
 
-Pour avoir d'avantages d'informations, n'hesitez pas à nous contacter à ?
